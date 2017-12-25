@@ -55,7 +55,8 @@ def train(mnist):
 
 def main(argv=None):
     mnist = Init()
-    train(mnist)
+    #train(mnist)
+    print(os.path.join('./tfmodel/','test.ckpt'))
 
 
 if __name__ == "__main__":
