@@ -39,10 +39,11 @@ def train(mnist):
     var_averages = tf.train.ExponentialMovingAverage(0.9999,global_step)
     var_averages_op = var_averages.apply(tf.trainable_variables())
     cross_entropy = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(labels=y_,logits=y))
-    train_step = tf.train.AdagradOptimizer(0.1).minimize(cross_entropy,global_step=global_step)
+    total_loss = cross_entropy + tf.get_collection('losses')
+    train_step = tf.train.AdagradOptimizer(0.1).minimize(total_loss,global_step=global_step)
     with tf.control_dependencies([train_step,var_averages_op]):
         train_op = tf.no_op(name='train')
-    saver = tf.train.Saver()
+    saver = tf.train.Saver(max_to_keep=10)
     with tf.Session() as sess:
         tf.global_variables_initializer().run()
         for i in range(30000):
@@ -53,10 +54,14 @@ def train(mnist):
                 saver.save(sess,os.path.join('./tfmodel/','test.ckpt'),global_step=global_step)
 
 
+def evaluate(mnist):
+    x = tf.placeholder(tf.float32, [None, 28 * 28], 'input-x')
+    y_ = tf.placeholder(tf.float32, [None, 10], 'input-y')
+
 def main(argv=None):
     mnist = Init()
-    #train(mnist)
-    print(os.path.join('./tfmodel/','test.ckpt'))
+    train(mnist)
+    #print(os.path.join('./tfmodel/','test.ckpt'))
 
 
 if __name__ == "__main__":
