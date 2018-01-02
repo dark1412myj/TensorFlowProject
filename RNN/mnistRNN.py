@@ -46,7 +46,8 @@ def test(x,y_):
     train_step = tf.train.AdagradOptimizer(0.1).minimize(loss, global_step=global_step)
     correct_rate = tf.reduce_mean(tf.cast(tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1)), tf.float32))
     saver = tf.train.Saver()
-    xs, ys = mnist.test.next_batch(BITCH_SIZE)
+    xs = mnist.test.images
+    ys = mnist.test.labels
     with tf.Session() as sess:
         ckpt = tf.train.get_checkpoint_state('./model/')
         if ckpt and ckpt.model_checkpoint_path:
