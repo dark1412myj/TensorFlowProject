@@ -67,6 +67,8 @@ def main(argv=None):
 
 if __name__ == "__main__":
     tf.app.run()
+    tf.layers
+    #tf.
     #lstm_cell = tf.nn.rnn_cell.BasicLSTMCell(num_units=128)
     #print(lstm_cell.state_size)
     #x = 10
