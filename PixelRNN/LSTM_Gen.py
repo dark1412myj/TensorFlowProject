@@ -85,10 +85,18 @@ class PixelRNN(object):
         self.out,self.stat = tf.nn.dynamic_rnn(self.lstm_cell,self.embed,initial_state=self.init_state,time_major=False,dtype=tf.float32)
 
     def add_output(self):
-        print('out',self.out.shape)
-        self.ans = tf.contrib.layers.fully_connected(self.out, self.color_size, activation_fn=None,
-                                          weights_initializer=tf.truncated_normal_initializer(stddev=0.1),
-                                          biases_initializer=tf.truncated_normal_initializer(stddev=0.1))
+        #print('out',tf.shape(self.out))
+        #den = tf.layers.dense(self.cell_size,self.color_size)
+        tmp=[]
+        for i in range(STEP_SIZE):
+            if i == 0:
+                tmp.append( tf.layers.dense(self.out[:,i,:],self.color_size,name='aaa',reuse=False) )
+            else:
+                tmp.append(tf.layers.dense(self.out[:, i, :], self.color_size,name='aaa',reuse=True))
+        self.ans = tf.stack(tmp,1)
+        #self.ans = tf.contrib.layers.fully_connected(self.out, self.color_size, activation_fn=None,
+        #                                  weights_initializer=tf.truncated_normal_initializer(stddev=0.1),
+        #                                  biases_initializer=tf.truncated_normal_initializer(stddev=0.1))
         #self.ans = tf.layers.dense(self.out,self.color_size,)
         #print('self.ans',self.ans.shape)
         self.haha = tf.argmax(self.ans,axis=2)
@@ -129,10 +137,10 @@ def train():
 
         # retrain with last
 
-        ckpt = tf.train.get_checkpoint_state('./rnnmodel/')
-        if ckpt and ckpt.model_checkpoint_path:
-            print(ckpt.model_checkpoint_path)
-            saver.restore(sess, ckpt.model_checkpoint_path)
+        #ckpt = tf.train.get_checkpoint_state('./rnnmodel/')
+        #if ckpt and ckpt.model_checkpoint_path:
+         #   print(ckpt.model_checkpoint_path)
+         #   saver.restore(sess, ckpt.model_checkpoint_path)
 
         while True:
             for i in range(len(ls) // 2):
